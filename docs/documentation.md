@@ -63,9 +63,11 @@ final class StoreUserPacket extends Packet
 
 * Defaults – provide a default value to make the field optional.
 
-## 3 . (Optional) Alias Input Keys
+## 3 . Alias Input Keys
 
-You want to map an incoming `user_name` field to the `name` constructor parameter:
+You may want to map an input data field to a specific packet attribute.
+
+Suppose you want to map an incoming `user_name` field to the `name` constructor parameter:
 
 ```php
 use Gillyware\Postal\Attributes\{Rule, Field};
@@ -74,10 +76,41 @@ use Gillyware\Postal\Attributes\{Rule, Field};
 public readonly string $name,
 ```
 
+## 4. Prepare for Validation
+
+You may want to manipulate input data before it's validated.
+
+The manipulated data that gets validated will be the data used to hydrate the packet.
+
+Override the `prepareForValidation` function, the parameter is the source data array:
+
+```php
+protected static function prepareForValidation(array $data): array
+{
+    return [
+        'name' => ucfirst($data['name']),
+        'email' => strtolower($data['email']),
+    ];
+}
+```
+
+## 5. Failed Validation
+
+You may want to specify behavior for validation failure. The default behavior throws a `ValidationException`.
+
+Override the `failedValidation` function, the parameter is the validator instance:
+
+```php
+protected static function failedValidation(Validator $validator): void
+{
+    throw new PostalException('Validation failed.');
+}
+```
+
 <a name="instantiating-packets"></a>
 # Instantiating Packets
 
-Packets are validated when constructed, and a `ValidationException` is thrown if validation fails.
+Packets are validated when instantiated in any of the following ways.
 
 ### 4.1 Controller Injection
 
@@ -90,7 +123,7 @@ public function store(StoreUserPacket $packet)
 }
 ```
 
-### 4.1 `Packetable` Trait
+### 4.2 `Packetable` Trait
 
 You may want to create a packet from an existing class, like an Eloquent Model. This class must implement `PacketableInterface` and use the `Packetable` trait:
 
@@ -123,7 +156,7 @@ $permission = Permission::query()->find(1);
 $permission->toPacket();
 ```
 
-### 4.2 Manual Construction
+### 4.3 Manual Construction
 
 Packets may also be constructed manually with a request or array.
 
