@@ -2,12 +2,17 @@
 
 use Gillyware\Postal\Tests\Fixtures\ExamplePacket;
 use Gillyware\Postal\Tests\Fixtures\FakeUser;
+use Gillyware\Postal\Tests\TestCase;
 
-it('converts a model to its packet', function () {
-    $user = new FakeUser(['name' => 'Bob', 'email' => 'bob@example.com']);
-    $packet = $user->toPacket();
+class PacketableTest extends TestCase
+{
+    public function test_it_converts_a_model_to_its_packet()
+    {
+        $user = new FakeUser(['name' => 'Bob', 'email' => 'bob@example.com']);
+        $packet = $user->toPacket();
 
-    expect($packet)->toBeInstanceOf(ExamplePacket::class)
-        ->and($packet->name)->toBe('Bob')
-        ->and($packet->email)->toBe('bob@example.com');
-});
+        $this->assertInstanceOf(ExamplePacket::class, $packet);
+        $this->assertEquals('Bob', $packet->name);
+        $this->assertEquals('bob@example.com', $packet->email);
+    }
+}
