@@ -1,4 +1,4 @@
-<p align="center"></p>
+<p align="center"><img width="400" alt="Postal Logo" src="https://github.com/user-attachments/assets/c0f812b8-e58f-4fa6-a858-d04290026484" /></p>
 
 <p align="center">
     <a href="https://github.com/gillyware/postal/actions">
