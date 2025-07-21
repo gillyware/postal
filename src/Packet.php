@@ -5,8 +5,9 @@ namespace Gillyware\Postal;
 use Gillyware\Postal\Attributes\Field;
 use Gillyware\Postal\Attributes\Rule;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\ValidationException;
 use ReflectionClass;
 
@@ -22,12 +23,14 @@ abstract class Packet implements Arrayable
      */
     public static function from(Request|array $source): static
     {
-        $data = $source instanceof Request ? $source->all() : $source;
+        $sourceData = $source instanceof Request ? $source->all() : $source;
 
-        $validator = Validator::make($data, static::rules());
+        $validationData = static::prepareForValidation($sourceData);
+
+        $validator = ValidatorFacade::make($validationData, static::rules());
 
         if ($validator->fails()) {
-            throw new ValidationException($validator);
+            static::failedValidation($validator);
         }
 
         /** @var array<string,mixed> $validated */
@@ -44,9 +47,30 @@ abstract class Packet implements Arrayable
         return $instance;
     }
 
+    /**
+     * Get an associative array of the class variables.
+     */
     public function toArray(): array
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * Prepare data to be validated.
+     */
+    protected static function prepareForValidation(array $data): array
+    {
+        return $data;
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @throws ValidationException
+     */
+    protected static function failedValidation(Validator $validator): void
+    {
+        throw new ValidationException($validator);
     }
 
     /**
