@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to **Postal** are documented in this file.
 
+## [1.1.1] – 2024‑07‑21
+### Updated
+- Banner and github/packagist links in README.
+
 ## [1.1.0] – 2024‑07‑21
 ### Added
 - `explicitRules()` hook for runtime validation.
