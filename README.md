@@ -1,18 +1,10 @@
-<p align="center"><img width="400" alt="Postal Logo" src="https://github.com/user-attachments/assets/c0f812b8-e58f-4fa6-a858-d04290026484" /></p>
+<p align="center"><img width="400" alt="Postal Logo" src="https://github.com/user-attachments/assets/569aa33d-60b2-4d00-8157-26aebf61c045" /></p>
 
 <p align="center">
-    <a href="https://github.com/gillyware/postal/actions">
-        <img src="https://github.com/gillyware/postal/workflows/tests/badge.svg" alt="Build Status">
-    </a>
-    <a href="https://packagist.org/packages/gillyware/postal">
-        <img src="https://img.shields.io/packagist/dt/gillyware/postal" alt="Total Downloads">
-    </a>
-    <a href="https://packagist.org/packages/gillyware/postal">
-        <img src="https://img.shields.io/packagist/v/gillyware/postal" alt="Latest Stable Version">
-    </a>
-    <a href="https://packagist.org/packages/gillyware/postal">
-        <img src="https://img.shields.io/packagist/l/gillyware/postal" alt="License">
-    </a>
+<a href="https://github.com/gillyware/postal/actions"><img src="https://github.com/gillyware/postal/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/gillyware/postal"><img src="https://img.shields.io/packagist/dt/gillyware/postal" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/gillyware/postal"><img src="https://img.shields.io/packagist/v/gillyware/postal" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/gillyware/postal"><img src="https://img.shields.io/packagist/l/gillyware/postal" alt="License"></a>
 </p>
 
 ## About Postal
