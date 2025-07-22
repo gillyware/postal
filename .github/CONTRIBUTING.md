@@ -1,5 +1,5 @@
 # Contribution Guide
 
-## Running Gatekeeper's Tests
+## Running Postal's Tests
 
-Copy the default file using `cp phpunit.xml.dist phpunit.xml`.
+Run `composer test`
