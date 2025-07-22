@@ -15,7 +15,7 @@ composer require gillyware/postal
 ```
 
 <a name="setting-up-packets"></a>
-# Setting Up Packets
+## Setting Up Packets
 
 Packets are **immutable DTOs** that live in `app/Packets`.  
 Each packet is a *single PHP class* whose constructor parameters define:
@@ -24,7 +24,8 @@ Each packet is a *single PHP class* whose constructor parameters define:
 * **Validation rules** via `#[Rule]` attributes  
 * Optional **input aliases** via `#[Field]` attributes
 
-## 1 . Create the Packet Class
+<a name="create-the-packet-class"></a>
+### 1 . Create the Packet Class
 
 ```php
 <?php
@@ -35,11 +36,12 @@ use Gillyware\Postal\Packet;
 
 final class StoreUserPacket extends Packet
 {
-    //
+    // ...
 }
 ```
 
-## 2. Add Properties and Rules
+<a name="add-properties-and-rules"></a>
+### 2. Add Properties and Rules
 
 ```php
 use Gillyware\Postal\Attributes\Rule;
@@ -63,7 +65,11 @@ final class StoreUserPacket extends Packet
 
 * Defaults – provide a default value to make the field optional.
 
-## 3 . Alias Input Keys
+> [!WARNING]
+> Rules defined using attributes are resolved at compile-time, so they must be a string (including constants) or an array of strings. If your validation rule must resolve at runtime (rule depends on a config value, rule defined using Laravel's Rule class, etc.), then that rule must be defined as an [explicit rule](#explicit-rules).
+
+<a name="alias-input-keys"></a>
+### 3. Alias Input Keys
 
 You may want to map an input data field to a specific packet attribute.
 
@@ -76,7 +82,47 @@ use Gillyware\Postal\Attributes\{Rule, Field};
 public readonly string $name,
 ```
 
-## 4. Prepare for Validation
+<a name="explicit-rules"></a>
+### 4. Explicit Rules
+
+Most validation can live in `#[Rule]` attributes, but sometimes a rule
+can’t be expressed at compile‑time (e.g. needs a config value)
+Use the **`explicitRules()`** hook for those cases.
+
+```php
+use Illuminate\Support\Facades\Config;
+use Illuminate\Validation\Rule as ValidationRule;
+use Gillyware\Postal\Packet;
+
+final class StorePermissionPacket extends Packet
+{
+    public function __construct(
+        #[Rule(['required', 'string', 'max:255'])]
+        public readonly string $name,
+    ) {}
+
+    /**
+     * Add or replace validation rules that depend on runtime data.
+     */
+    protected static function explicitRules(): array
+    {
+        $table = Config::get('gatekeeper.tables.permissions');
+
+        return [
+            // Merges with attribute rules.
+            'name' => [
+                ValidationRule::unique($table, 'name')->withoutTrashed(),
+            ],
+        ];
+    }
+}
+```
+
+> [!NOTE]
+> If a constructor parameter uses `#[Field('input_key')]`, key your explicit rules array by the input key (`input_key`) not the property name.
+
+<a name="prepare-for-validation"></a>
+### 5. Prepare for Validation
 
 You may want to manipulate input data before it's validated.
 
@@ -94,13 +140,17 @@ protected static function prepareForValidation(array $data): array
 }
 ```
 
-## 5. Failed Validation
+<a name="failed-validation"></a>
+### 6. Failed Validation
 
 You may want to specify behavior for validation failure. The default behavior throws a `ValidationException`.
 
 Override the `failedValidation` function, the parameter is the validator instance:
 
 ```php
+use Illuminate\Contracts\Validation\Validator;
+use Gillyware\Postal\Exceptions\PostalException;
+
 protected static function failedValidation(Validator $validator): void
 {
     throw new PostalException('Validation failed.');
@@ -108,13 +158,14 @@ protected static function failedValidation(Validator $validator): void
 ```
 
 <a name="instantiating-packets"></a>
-# Instantiating Packets
+## Instantiating Packets
 
 Packets are validated when instantiated in any of the following ways.
 
-### 4.1 Controller Injection
+<a name="controller-injection"></a>
+### Controller Injection
 
-An packet injected into a controller action will be constructed from `$request->all()`.
+A packet injected into a controller action will be constructed from `$request->all()`.
 
 ```php
 public function store(StoreUserPacket $packet)
@@ -123,7 +174,8 @@ public function store(StoreUserPacket $packet)
 }
 ```
 
-### 4.2 `Packetable` Trait
+<a name="packetable-trait"></a>
+### `Packetable` Trait
 
 You may want to create a packet from an existing class, like an Eloquent Model. This class must implement `PacketableInterface` and use the `Packetable` trait:
 
@@ -140,7 +192,10 @@ class Permission extends Model implements PacketableInterface
 
     // You may optionally make the packet class explicit.
     // The default is App\Packets\{className}Packet (e.g. App\Packets\PermissionPacket).
-    protected static function packetClass(): string {...}
+    protected static function packetClass(): string
+    {
+        return \App\Packets\CustomPermissionPacket::class;
+    }
 
     // You may optionally specify the data used to construct the packet.
     // The default is $this->toArray().
@@ -156,7 +211,8 @@ $permission = Permission::query()->find(1);
 $permission->toPacket();
 ```
 
-### 4.3 Manual Construction
+<a name="manual-construction"></a>
+### Manual Construction
 
 Packets may also be constructed manually with a request or array.
 
@@ -167,7 +223,7 @@ $packet = StoreUserPacket::from($request->all());
 ```
 
 <a name="accessing-packet-data"></a>
-## 5 . Accessing Data
+## Accessing Data
 
 You may access individual packet attributes or get an array with all validated attributes:
 

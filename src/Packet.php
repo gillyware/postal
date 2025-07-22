@@ -74,11 +74,46 @@ abstract class Packet implements Arrayable
     }
 
     /**
+     * Explicitly supply rules. Intended for rules that cannot be resolved at compile-time.
+     */
+    protected static function explicitRules(): array
+    {
+        return [];
+    }
+
+    /**
+     * Final rule set used by ::from().
+     * Combines attribute rules and explicit rules.
+     */
+    private static function rules(): array
+    {
+        $rules = static::attributeRules();
+        $explicit = static::explicitRules();
+        $aliasMap = static::parameterAliasMap();
+
+        foreach ($explicit as $key => $value) {
+            $inputKey = $aliasMap[$key] ?? $key;
+
+            if (isset($rules[$inputKey])) {
+                // Merge arrays / pipe-delimited strings into array
+                $rules[$inputKey] = array_merge(
+                    (array) $rules[$inputKey],
+                    (array) $value
+                );
+            } else {
+                $rules[$inputKey] = $value;
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
      * Collect validation rules declared via attributes.
      *
      * @return array<string, string|array>
      */
-    private static function rules(): array
+    private static function attributeRules(): array
     {
         static $cache = [];
 
@@ -102,6 +137,26 @@ abstract class Packet implements Arrayable
 
             return $rules;
         })();
+    }
+
+    /**
+     * Map constructor parameter name to alias (if #[Field] present).
+     *
+     * @return array<string,string>
+     */
+    private static function parameterAliasMap(): array
+    {
+        $map = [];
+        $ref = new ReflectionClass(static::class);
+
+        foreach ($ref->getConstructor()?->getParameters() ?? [] as $param) {
+            $fieldAttr = $param->getAttributes(Field::class)[0] ?? null;
+            if ($fieldAttr) {
+                $map[$param->getName()] = $fieldAttr->newInstance()->name;
+            }
+        }
+
+        return $map;
     }
 
     /**
