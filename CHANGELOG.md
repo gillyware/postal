@@ -1,21 +1,21 @@
-# Changelog
-All notable changes to **Postal** are documented in this file.
+# Release Notes for 1.x
 
-## [1.1.1] – 2024‑07‑21
-### Updated
-- Banner and github/packagist links in README.
+## v1.1.2 2025-07-23
+- Remove `main` branch by [@braxey](https://github.com/braxey) in TBD
 
-## [1.1.0] – 2024‑07‑21
-### Added
-- `explicitRules()` hook for runtime validation.
-- Automatic merge of explicit and attribute rules (alias‑aware).
-- New docs & unit tests covering the above.
 
-## [1.0.0] – 2024‑07‑21
-### Added
-- Attribute‑based validation via `#[Rule]`.
-- `#[Field]` input‑aliasing.
-- Controller auto‑injection of packets.
-- `Packetable` trait & interface.
-- `prepareForValidation()` hook to mutate input before validation.
-- `failedValidation()` hook to customise failure behaviour.
+## v1.1.1 – 2025‑07‑21
+- Update banner and github/packagist links in README.
+
+## v1.1.0 – 2025‑07‑21
+- Add `explicitRules()` hook for runtime validation.
+- Implement automatic merge of explicit and attribute rules (alias‑aware).
+- Add new docs & unit tests covering the above.
+
+## v1.0.0 – 2025‑07‑21
+- Add attribute‑based validation via `#[Rule]`.
+- Allow `#[Field]` input‑aliasing.
+- Implement controller auto‑injection of packets.
+- Add `Packetable` trait & interface.
+- Add `prepareForValidation()` hook to mutate input before validation.
+- Add `failedValidation()` hook to customise failure behaviour.

@@ -56,9 +56,6 @@
     ]
   },
   "extra": {
-    "branch-alias": {
-      "dev-main": "1.x-dev"
-    },
     "laravel": {
       "providers": [
         "Gillyware\\Postal\\Providers\\PostalServiceProvider"
